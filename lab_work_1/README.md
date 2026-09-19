@@ -28,7 +28,7 @@ CLI-приложение на Python для поиска ключевых сло
 ## Структура
 
 ```text
-common-crawl-cli/
+lab_work_1/
 ├── .gitignore
 ├── app.py
 ├── cdx.py
