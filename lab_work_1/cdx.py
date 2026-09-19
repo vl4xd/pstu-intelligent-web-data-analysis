@@ -17,6 +17,12 @@ class CdxError(RuntimeError):
 
 @dataclass(frozen=True)
 class CdxRecord:
+    """Одна запись из CDX-индекса Common Crawl.
+
+    Содержит URL, метку времени, тип содержимого, диапазон байт в WARC-файле
+    и другую служебную информацию, необходимую для точечной загрузки capture.
+    """
+
     url: str
     timestamp: str
     mime: str
@@ -28,6 +34,13 @@ class CdxRecord:
 
     @property
     def archived_at(self) -> str:
+        """Возвращает читаемую дату архивации из timestamp.
+
+        Формат timestamp в CDX: YYYYMMDDhhmmss. Преобразует его
+        в строку вида 'YYYY-MM-DD HH:MM:SS UTC'. Если длина timestamp
+        не 14 символов, возвращает исходное значение без изменений.
+        """
+
         if len(self.timestamp) != 14:
             return self.timestamp
 
@@ -58,19 +71,37 @@ def normalize_domain(value: str) -> str:
 
 
 class CdxClient:
+    """Клиент для работы с CDX API Common Crawl.
+
+    Инкапсулирует HTTP-сессию, таймауты и парсинг ответов CDX-индекса.
+    Позволяет получить список crawl-индексов и список HTML-кандидатов
+    по заданному домену.
+    """
+
     def __init__(
         self,
         timeout: float = 30.0,
         user_agent: str = "common-crawl-cli/1.0",
     ) -> None:
+        """Создаёт HTTP-сессию с заданным таймаутом и User-Agent."""
+        
         self.timeout = timeout
         self.session = requests.Session()
         self.session.headers.update({"User-Agent": user_agent})
 
     def close(self) -> None:
+        """Закрывает HTTP-сессию и освобождает ресурсы."""
+
         self.session.close()
 
     def get_latest_crawl_id(self) -> str:
+        """Возвращает id самого свежего индекса Common Crawl.
+
+        Запрашивает collinfo.json и берёт идентификатор первой записи
+        (индексы отсортированы от нового к старому). При сетевой ошибке
+        или некорректном JSON бросает CdxError.
+        """
+
         try:
             response = self.session.get(COLLECTIONS_URL, timeout=self.timeout)
             response.raise_for_status()
@@ -99,7 +130,14 @@ class CdxClient:
         domain: str,
         limit: int = 500,
     ) -> list[CdxRecord]:
-        """Возвращает HTML-кандидатов из одного crawl."""
+        """Возвращает HTML-кандидатов из одного crawl.
+
+        Делает запрос к CDX-индексу указанного crawl с фильтрами
+        status:200 и mime:text/html, схлопывает дубликаты по urlkey
+        и парсит NDJSON-ответ в список CdxRecord. При HTTP-ошибке
+        (502/503/504 и т.п.) или ошибке парсинга бросает CdxError.
+        """
+
         if not crawl_id or not re.fullmatch(r"CC-MAIN-\d{4}-\d{2}", crawl_id):
             raise CdxError(
                 "Некорректный --crawl. Ожидался формат CC-MAIN-YYYY-WW."
@@ -186,6 +224,11 @@ class CdxClient:
 
 
 def response_to_dict(line: str) -> dict[str, Any]:
+    """Парсит одну строку NDJSON-ответа CDX в словарь.
+
+    Бросает ValueError, если строка не является корректным JSON-объектом.
+    """
+
     import json
 
     payload = json.loads(line)

@@ -13,6 +13,12 @@ from warc import WARCClient, WARCError, find_matching_page
 
 
 def build_parser() -> argparse.ArgumentParser:
+    """Создаёт и настраивает парсер аргументов командной строки.
+
+    Возвращает готовый ArgumentParser со всеми опциями CLI:
+    ключевыми словами, доменами, лимитами, таймаутами и т.д.
+    """
+
     parser = argparse.ArgumentParser(
         prog="common-crawl-search",
         description=(
@@ -101,6 +107,12 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def positive_int(value: str) -> int:
+    """Преобразует строку в целое число, требуя значение > 0.
+
+    Используется как type= в argparse для аргументов-лимитов.
+    При некорректном значении бросает argparse.ArgumentTypeError.
+    """
+
     number = int(value)
     if number <= 0:
         raise argparse.ArgumentTypeError("значение должно быть > 0")
@@ -108,6 +120,11 @@ def positive_int(value: str) -> int:
 
 
 def positive_float(value: str) -> float:
+    """Преобразует строку в число с плавающей точкой, требуя значение > 0.
+
+    Применяется для аргументов вроде --timeout.
+    """
+
     number = float(value)
     if number <= 0:
         raise argparse.ArgumentTypeError("значение должно быть > 0")
@@ -115,6 +132,11 @@ def positive_float(value: str) -> float:
 
 
 def non_negative_float(value: str) -> float:
+    """Преобразует строку в число с плавающей точкой, требуя значение >= 0.
+
+    Применяется для аргумента --delay, где нулевая пауза допустима.
+    """
+
     number = float(value)
     if number < 0:
         raise argparse.ArgumentTypeError("значение должно быть >= 0")
@@ -122,6 +144,18 @@ def non_negative_float(value: str) -> float:
 
 
 def run(args: argparse.Namespace) -> int:
+    """Основная логика программы: поиск ключевых слов в Common Crawl.
+
+    Порядок работы:
+      1. Определяет crawl id (из --crawl или последний доступный).
+      2. Запрашивает CDX-кандидатов по каждому домену.
+      3. Скачивает WARC-записи и парсит HTML.
+      4. Ищет страницы, где встречаются все ключевые слова.
+      5. Печатает таблицу результатов и итоговую статистику.
+
+    Возвращает код выхода (0 при успехе).
+    """
+
     cdx_client = CdxClient(
         timeout=args.timeout,
         user_agent="common-crawl-cli/1.0 (+https://commoncrawl.org/)",
@@ -240,6 +274,13 @@ def run(args: argparse.Namespace) -> int:
 
 
 def main(argv: Sequence[str] | None = None) -> int:
+    """Точка входа CLI: разбирает аргументы и запускает run().
+
+    Ловит CdxError/WARCError (возвращает код 2) и KeyboardInterrupt
+    (возвращает код 130). Аргумент argv нужен для вызова из тестов
+    или из Jupyter без реального sys.argv.
+    """
+
     parser = build_parser()
     args = parser.parse_args(argv)
 

@@ -21,18 +21,31 @@ class WARCError(RuntimeError):
 
 @dataclass(frozen=True)
 class PageData:
+    """Извлечённые из HTML-страницы заголовок и видимый текст."""
+    
     title: str
     text: str
 
 
 @dataclass(frozen=True)
 class MatchData:
+    """Результат поиска ключевых слов: заголовок и фрагмент текста."""
+
     title: str
     snippet: str
 
 
 class _VisibleTextParser(HTMLParser):
+    """HTMLParser, собирающий title и видимый текст страницы.
+
+    Пропускает содержимое script, style, noscript, template, svg.
+    Складывает текст из <title> отдельно (title_parts), остальной
+    видимый текст — в text_parts.
+    """
+
     def __init__(self) -> None:
+        """Инициализирует счётчик пропуска и списки для title/текста."""
+
         super().__init__(convert_charrefs=True)
         self._skip_depth = 0
         self._in_title = False
@@ -40,6 +53,8 @@ class _VisibleTextParser(HTMLParser):
         self.text_parts: list[str] = []
 
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        """Обрабатывает открывающий тег: включает skip или входит в <title>."""
+
         tag = tag.lower()
         if tag in {"script", "style", "noscript", "template", "svg"}:
             self._skip_depth += 1
@@ -47,6 +62,8 @@ class _VisibleTextParser(HTMLParser):
             self._in_title = True
 
     def handle_endtag(self, tag: str) -> None:
+        """Обрабатывает закрывающий тег: выключает skip или выходит из <title>."""
+
         tag = tag.lower()
         if tag == "title":
             self._in_title = False
@@ -55,6 +72,8 @@ class _VisibleTextParser(HTMLParser):
                 self._skip_depth -= 1
 
     def handle_data(self, data: str) -> None:
+        """Сохраняет текстовые данные, пропуская содержимое script/style и пр."""
+
         if self._skip_depth > 0:
             return
 
@@ -65,11 +84,20 @@ class _VisibleTextParser(HTMLParser):
 
 
 def clean_text(value: str) -> str:
+    """Сохраняет текстовые данные, пропуская содержимое script/style и пр."""
+
     value = html.unescape(value)
     return re.sub(r"\s+", " ", value).strip()
 
 
 def parse_html(html_bytes: bytes, encoding: str | None = None) -> PageData:
+    """Парсит байты HTML и возвращает заголовок и видимый текст.
+
+    Пытается декодировать сначала указанной кодировкой (если задана),
+    затем utf-8, windows-1251, latin-1. Ошибки декодирования заменяются
+    символом-заменителем. Возвращает PageData(title=..., text=...).
+    """
+
     encodings = []
     if encoding:
         encodings.append(encoding)
@@ -97,6 +125,13 @@ def parse_html(html_bytes: bytes, encoding: str | None = None) -> PageData:
 
 
 class WARCClient:
+    """Клиент для точечной загрузки и разбора WARC-записей.
+
+    Использует HTTP Range-запросы к data.commoncrawl.org, чтобы скачать
+    ровно один capture по offset/length из CDX. Между запросами выдерживает
+    паузу delay, чтобы не провоцировать rate limit.
+    """
+
     def __init__(
         self,
         timeout: float = 30.0,
@@ -104,6 +139,8 @@ class WARCClient:
         delay: float = 1.0,
         snippet_chars: int = 220,
     ) -> None:
+        """Сохраняет настройки и создаёт HTTP-сессию."""
+        
         self.timeout = timeout
         self.delay = delay
         self.snippet_chars = snippet_chars
@@ -112,15 +149,27 @@ class WARCClient:
         self._last_request_at = 0.0
 
     def close(self) -> None:
+        """Закрывает HTTP-сессию и освобождает ресурсы."""
+
         self.session.close()
 
     def _respect_delay(self) -> None:
+        """Спит столько, чтобы между запросами прошло не меньше delay секунд."""
+
         elapsed = time.monotonic() - self._last_request_at
         remaining = self.delay - elapsed
         if remaining > 0:
             time.sleep(remaining)
 
     def fetch_page(self, record: CdxRecord) -> PageData:
+        """Скачивает один WARC-record по Range и возвращает PageData.
+
+        Делает GET с заголовком Range на основе record.offset/length,
+        проверяет код 206, Content-Range и размер ответа, затем
+        распаковывает gzip и извлекает HTML. При любой проблеме
+        бросает WARCError.
+        """
+
         self._respect_delay()
 
         start = record.offset
@@ -207,6 +256,12 @@ def parse_warc_response(data: bytes, encoding: str | None = None) -> PageData:
 
 
 def find_header_end(data: bytes) -> tuple[int, int]:
+    """Ищет конец блока заголовков (пустую строку).
+
+    Возвращает (позиция, длина разделителя): 4 для CRLFCRLF,
+    2 для LFLF или (-1, 0), если разделитель не найден.
+    """
+
     position = data.find(b"\r\n\r\n")
     if position >= 0:
         return position, 4
@@ -219,6 +274,12 @@ def find_header_end(data: bytes) -> tuple[int, int]:
 
 
 def parse_headers(block: bytes) -> dict[str, str]:
+    """Парсит блок HTTP/WARC-заголовков в словарь name -> value.
+
+    Декодирует как latin-1 (безопасно для любых байт), игнорирует
+    пустые строки и строки без двоеточия.
+    """
+
     headers: dict[str, str] = {}
     text = block.decode("iso-8859-1", errors="replace")
 
@@ -232,6 +293,11 @@ def parse_headers(block: bytes) -> dict[str, str]:
 
 
 def extract_charset(content_type: str) -> str | None:
+    """Извлекает значение charset из заголовка Content-Type.
+
+    Возвращает имя кодировки без кавычек или None, если charset не указан.
+    """
+
     match = re.search(r"charset=([^\s;]+)", content_type, re.IGNORECASE)
     if not match:
         return None
@@ -240,6 +306,12 @@ def extract_charset(content_type: str) -> str | None:
 
 
 def parse_http_payload(payload: bytes, encoding: str | None = None) -> PageData:
+    """Отделяет HTTP-заголовки от тела и парсит HTML.
+
+    Ищет пустую строку (CRLFCRLF или LFLF) как разделитель. Если её нет,
+    считает, что весь payload — это тело. Возвращает PageData.
+    """
+
     header_end = payload.find(b"\r\n\r\n")
     separator_length = 4
 
@@ -260,6 +332,14 @@ def find_matching_page(
     keywords: list[str],
     snippet_chars: int = 220,
 ) -> MatchData | None:
+    """Проверяет, что на странице есть все ключевые слова.
+
+    Ищет каждое ключевое слово как подстроку в склейке title + text
+    (регистронезависимо). Если хотя бы одного слова нет — возвращает None.
+    Иначе возвращает MatchData с заголовком и фрагментом вокруг
+    первого найденного совпадения.
+    """
+    
     terms = [clean_text(term).casefold() for term in keywords if clean_text(term)]
     if not terms:
         return None
@@ -286,6 +366,14 @@ def find_matching_page(
 
 
 def make_snippet(text: str, match_start: int, max_chars: int) -> str:
+    """Возвращает фрагмент текста вокруг позиции совпадения.
+
+    Берёт max_chars символов, стараясь захватить немного контекста
+    перед совпадением (примерно треть длины). Добавляет многоточия
+    по краям, если фрагмент обрезан. Если текст короче max_chars —
+    возвращает его целиком.
+    """
+
     if len(text) <= max_chars:
         return text
 
