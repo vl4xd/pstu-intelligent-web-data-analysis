@@ -1,0 +1,163 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+            <script src="lib/bindings/utils.js"></script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js" integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+        
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+          crossorigin="anonymous"
+        />
+        <script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+          crossorigin="anonymous"
+        ></script>
+
+
+        <center>
+          <h1></h1>
+        </center>
+        <style type="text/css">
+
+             #mynetwork {
+                 width: 100%;
+                 height: 800px;
+                 background-color: #ffffff;
+                 border: 1px solid lightgray;
+                 position: relative;
+                 float: left;
+             }
+
+             
+
+             
+
+             
+        </style>
+    </head>
+
+
+    <body>
+        <div class="card" style="width: 100%">
+            
+            
+            <div id="mynetwork" class="card-body"></div>
+        </div>
+
+        
+        
+
+        <script type="text/javascript">
+
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+              
+
+              
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  var container = document.getElementById('mynetwork');
+
+                  
+
+                  // parsing and collecting nodes and edges from the python
+                  nodes = new vis.DataSet([{"color": {"background": "#4A90E2", "border": "#245580", "highlight": {"background": "#F5A623", "border": "#C47F0A"}}, "font": {"color": "#222222"}, "id": "\u0418\u0441\u043a\u0443\u0441\u0441\u0442\u0432\u0435\u043d\u043d\u044b\u0439 \u0438\u043d\u0442\u0435\u043b\u043b\u0435\u043a\u0442", "label": "\u0418\u0441\u043a\u0443\u0441\u0441\u0442\u0432\u0435\u043d\u043d\u044b\u0439 \u0438\u043d\u0442\u0435\u043b\u043b\u0435\u043a\u0442", "shape": "dot", "size": 20, "title": "\u003cb\u003e\u0418\u0441\u043a\u0443\u0441\u0441\u0442\u0432\u0435\u043d\u043d\u044b\u0439 \u0438\u043d\u0442\u0435\u043b\u043b\u0435\u043a\u0442\u003c/b\u003e\u003cbr\u003e\u042f\u0437\u044b\u043a: ru\u003cbr\u003e\u0421\u0441\u044b\u043b\u043a\u0430: https://ru.wikipedia.org/wiki/%D0%98%D1%81%D0%BA%D1%83%D1%81%D1%81%D1%82%D0%B2%D0%B5%D0%BD%D0%BD%D1%8B%D0%B9_%D0%B8%D0%BD%D1%82%D0%B5%D0%BB%D0%BB%D0%B5%D0%BA%D1%82", "url": "https://ru.wikipedia.org/wiki/%D0%98%D1%81%D0%BA%D1%83%D1%81%D1%81%D1%82%D0%B2%D0%B5%D0%BD%D0%BD%D1%8B%D0%B9_%D0%B8%D0%BD%D1%82%D0%B5%D0%BB%D0%BB%D0%B5%D0%BA%D1%82"}, {"color": {"background": "#4A90E2", "border": "#245580", "highlight": {"background": "#F5A623", "border": "#C47F0A"}}, "font": {"color": "#222222"}, "id": "AIBO", "label": "AIBO", "shape": "dot", "size": 20, "title": "\u003cb\u003eAIBO\u003c/b\u003e\u003cbr\u003e\u042f\u0437\u044b\u043a: ru\u003cbr\u003e\u0421\u0441\u044b\u043b\u043a\u0430: https://ru.wikipedia.org/wiki/AIBO", "url": "https://ru.wikipedia.org/wiki/AIBO"}, {"color": {"background": "#4A90E2", "border": "#245580", "highlight": {"background": "#F5A623", "border": "#C47F0A"}}, "font": {"color": "#222222"}, "id": "Alibaba Cloud", "label": "Alibaba Cloud", "shape": "dot", "size": 20, "title": "\u003cb\u003eAlibaba Cloud\u003c/b\u003e\u003cbr\u003e\u042f\u0437\u044b\u043a: ru\u003cbr\u003e\u0421\u0441\u044b\u043b\u043a\u0430: https://ru.wikipedia.org/wiki/Alibaba_Cloud", "url": "https://ru.wikipedia.org/wiki/Alibaba_Cloud"}, {"color": {"background": "#4A90E2", "border": "#245580", "highlight": {"background": "#F5A623", "border": "#C47F0A"}}, "font": {"color": "#222222"}, "id": "AlphaGo", "label": "AlphaGo", "shape": "dot", "size": 20, "title": "\u003cb\u003eAlphaGo\u003c/b\u003e\u003cbr\u003e\u042f\u0437\u044b\u043a: ru\u003cbr\u003e\u0421\u0441\u044b\u043b\u043a\u0430: https://ru.wikipedia.org/wiki/AlphaGo", "url": "https://ru.wikipedia.org/wiki/AlphaGo"}, {"color": {"background": "#4A90E2", "border": "#245580", "highlight": {"background": "#F5A623", "border": "#C47F0A"}}, "font": {"color": "#222222"}, "id": "Amazon", "label": "Amazon", "shape": "dot", "size": 20, "title": "\u003cb\u003eAmazon\u003c/b\u003e\u003cbr\u003e\u042f\u0437\u044b\u043a: ru\u003cbr\u003e\u0421\u0441\u044b\u043b\u043a\u0430: https://ru.wikipedia.org/wiki/Amazon", "url": "https://ru.wikipedia.org/wiki/Amazon"}, {"color": {"background": "#4A90E2", "border": "#245580", "highlight": {"background": "#F5A623", "border": "#C47F0A"}}, "font": {"color": "#222222"}, "id": "Amazon Alexa", "label": "Amazon Alexa", "shape": "dot", "size": 20, "title": "\u003cb\u003eAmazon Alexa\u003c/b\u003e\u003cbr\u003e\u042f\u0437\u044b\u043a: ru\u003cbr\u003e\u0421\u0441\u044b\u043b\u043a\u0430: https://ru.wikipedia.org/wiki/Amazon_Alexa", "url": "https://ru.wikipedia.org/wiki/Amazon_Alexa"}, {"color": {"background": "#4A90E2", "border": "#245580", "highlight": {"background": "#F5A623", "border": "#C47F0A"}}, "font": {"color": "#222222"}, "id": "Anthropic", "label": "Anthropic", "shape": "dot", "size": 20, "title": "\u003cb\u003eAnthropic\u003c/b\u003e\u003cbr\u003e\u042f\u0437\u044b\u043a: ru\u003cbr\u003e\u0421\u0441\u044b\u043b\u043a\u0430: https://ru.wikipedia.org/wiki/Anthropic", "url": "https://ru.wikipedia.org/wiki/Anthropic"}, {"color": {"background": "#4A90E2", "border": "#245580", "highlight": {"background": "#F5A623", "border": "#C47F0A"}}, "font": {"color": "#222222"}, "id": "Apple Intelligence", "label": "Apple Intelligence", "shape": "dot", "size": 20, "title": "\u003cb\u003eApple Intelligence\u003c/b\u003e\u003cbr\u003e\u042f\u0437\u044b\u043a: ru\u003cbr\u003e\u0421\u0441\u044b\u043b\u043a\u0430: https://ru.wikipedia.org/wiki/Apple_Intelligence", "url": "https://ru.wikipedia.org/wiki/Apple_Intelligence"}, {"color": {"background": "#4A90E2", "border": "#245580", "highlight": {"background": "#F5A623", "border": "#C47F0A"}}, "font": {"color": "#222222"}, "id": "ArXiv.org", "label": "ArXiv.org", "shape": "dot", "size": 20, "title": "\u003cb\u003eArXiv.org\u003c/b\u003e\u003cbr\u003e\u042f\u0437\u044b\u043a: ru\u003cbr\u003e\u0421\u0441\u044b\u043b\u043a\u0430: https://ru.wikipedia.org/wiki/ArXiv.org", "url": "https://ru.wikipedia.org/wiki/ArXiv.org"}, {"color": {"background": "#4A90E2", "border": "#245580", "highlight": {"background": "#F5A623", "border": "#C47F0A"}}, "font": {"color": "#222222"}, "id": "\u0410\u0441\u0441\u043e\u0448\u0438\u044d\u0439\u0442\u0435\u0434 \u041f\u0440\u0435\u0441\u0441", "label": "\u0410\u0441\u0441\u043e\u0448\u0438\u044d\u0439\u0442\u0435\u0434 \u041f\u0440\u0435\u0441\u0441", "shape": "dot", "size": 20, "title": "\u003cb\u003e\u0410\u0441\u0441\u043e\u0448\u0438\u044d\u0439\u0442\u0435\u0434 \u041f\u0440\u0435\u0441\u0441\u003c/b\u003e\u003cbr\u003e\u042f\u0437\u044b\u043a: ru\u003cbr\u003e\u0421\u0441\u044b\u043b\u043a\u0430: https://ru.wikipedia.org/wiki/%D0%90%D1%81%D1%81%D0%BE%D1%88%D0%B8%D1%8D%D0%B9%D1%82%D0%B5%D0%B4_%D0%9F%D1%80%D0%B5%D1%81%D1%81", "url": "https://ru.wikipedia.org/wiki/%D0%90%D1%81%D1%81%D0%BE%D1%88%D0%B8%D1%8D%D0%B9%D1%82%D0%B5%D0%B4_%D0%9F%D1%80%D0%B5%D1%81%D1%81"}, {"color": {"background": "#4A90E2", "border": "#245580", "highlight": {"background": "#F5A623", "border": "#C47F0A"}}, "font": {"color": "#222222"}, "id": "Atlas of AI: Power, Politics, and the Planetary Costs of Artificial Intelligence", "label": "Atlas of AI: Power, Politics, and the Planetary Costs of Artificial Intelligence", "shape": "dot", "size": 20, "title": "\u003cb\u003eAtlas of AI: Power, Politics, and the Planetary Costs of Artificial Intelligence\u003c/b\u003e\u003cbr\u003e\u042f\u0437\u044b\u043a: ru\u003cbr\u003e\u0421\u0441\u044b\u043b\u043a\u0430: https://ru.wikipedia.org/wiki/Atlas_of_AI%3A_Power%2C_Politics%2C_and_the_Planetary_Costs_of_Artificial_Intelligence", "url": "https://ru.wikipedia.org/wiki/Atlas_of_AI%3A_Power%2C_Politics%2C_and_the_Planetary_Costs_of_Artificial_Intelligence"}, {"color": {"background": "#4A90E2", "border": "#245580", "highlight": {"background": "#F5A623", "border": "#C47F0A"}}, "font": {"color": "#222222"}, "id": "Audi TT", "label": "Audi TT", "shape": "dot", "size": 20, "title": "\u003cb\u003eAudi TT\u003c/b\u003e\u003cbr\u003e\u042f\u0437\u044b\u043a: ru\u003cbr\u003e\u0421\u0441\u044b\u043b\u043a\u0430: https://ru.wikipedia.org/wiki/Audi_TT", "url": "https://ru.wikipedia.org/wiki/Audi_TT"}, {"color": {"background": "#4A90E2", "border": "#245580", "highlight": {"background": "#F5A623", "border": "#C47F0A"}}, "font": {"color": "#222222"}, "id": "BT Group", "label": "BT Group", "shape": "dot", "size": 20, "title": "\u003cb\u003eBT Group\u003c/b\u003e\u003cbr\u003e\u042f\u0437\u044b\u043a: ru\u003cbr\u003e\u0421\u0441\u044b\u043b\u043a\u0430: https://ru.wikipedia.org/wiki/BT_Group", "url": "https://ru.wikipedia.org/wiki/BT_Group"}, {"color": {"background": "#4A90E2", "border": "#245580", "highlight": {"background": "#F5A623", "border": "#C47F0A"}}, "font": {"color": "#222222"}, "id": "\u0411\u043e\u043b\u044c\u0448\u0438\u0435 \u0434\u0430\u043d\u043d\u044b\u0435", "label": "\u0411\u043e\u043b\u044c\u0448\u0438\u0435 \u0434\u0430\u043d\u043d\u044b\u0435", "shape": "dot", "size": 20, "title": "\u003cb\u003e\u0411\u043e\u043b\u044c\u0448\u0438\u0435 \u0434\u0430\u043d\u043d\u044b\u0435\u003c/b\u003e\u003cbr\u003e\u042f\u0437\u044b\u043a: ru\u003cbr\u003e\u0421\u0441\u044b\u043b\u043a\u0430: https://ru.wikipedia.org/wiki/%D0%91%D0%BE%D0%BB%D1%8C%D1%88%D0%B8%D0%B5_%D0%B4%D0%B0%D0%BD%D0%BD%D1%8B%D0%B5", "url": "https://ru.wikipedia.org/wiki/%D0%91%D0%BE%D0%BB%D1%8C%D1%88%D0%B8%D0%B5_%D0%B4%D0%B0%D0%BD%D0%BD%D1%8B%D0%B5"}, {"color": {"background": "#4A90E2", "border": "#245580", "highlight": {"background": "#F5A623", "border": "#C47F0A"}}, "font": {"color": "#222222"}, "id": "Bing", "label": "Bing", "shape": "dot", "size": 20, "title": "\u003cb\u003eBing\u003c/b\u003e\u003cbr\u003e\u042f\u0437\u044b\u043a: ru\u003cbr\u003e\u0421\u0441\u044b\u043b\u043a\u0430: https://ru.wikipedia.org/wiki/Bing", "url": "https://ru.wikipedia.org/wiki/Bing"}, {"color": {"background": "#4A90E2", "border": "#245580", "highlight": {"background": "#F5A623", "border": "#C47F0A"}}, "font": {"color": "#222222"}, "id": "ByteDance", "label": "ByteDance", "shape": "dot", "size": 20, "title": "\u003cb\u003eByteDance\u003c/b\u003e\u003cbr\u003e\u042f\u0437\u044b\u043a: ru\u003cbr\u003e\u0421\u0441\u044b\u043b\u043a\u0430: https://ru.wikipedia.org/wiki/ByteDance", "url": "https://ru.wikipedia.org/wiki/ByteDance"}, {"color": {"background": "#4A90E2", "border": "#245580", "highlight": {"background": "#F5A623", "border": "#C47F0A"}}, "font": {"color": "#222222"}, "id": "C-3PO", "label": "C-3PO", "shape": "dot", "size": 20, "title": "\u003cb\u003eC-3PO\u003c/b\u003e\u003cbr\u003e\u042f\u0437\u044b\u043a: ru\u003cbr\u003e\u0421\u0441\u044b\u043b\u043a\u0430: https://ru.wikipedia.org/wiki/C-3PO", "url": "https://ru.wikipedia.org/wiki/C-3PO"}, {"color": {"background": "#4A90E2", "border": "#245580", "highlight": {"background": "#F5A623", "border": "#C47F0A"}}, "font": {"color": "#222222"}, "id": "CNews", "label": "CNews", "shape": "dot", "size": 20, "title": "\u003cb\u003eCNews\u003c/b\u003e\u003cbr\u003e\u042f\u0437\u044b\u043a: ru\u003cbr\u003e\u0421\u0441\u044b\u043b\u043a\u0430: https://ru.wikipedia.org/wiki/CNews", "url": "https://ru.wikipedia.org/wiki/CNews"}, {"color": {"background": "#4A90E2", "border": "#245580", "highlight": {"background": "#F5A623", "border": "#C47F0A"}}, "font": {"color": "#222222"}, "id": "ChatGPT", "label": "ChatGPT", "shape": "dot", "size": 20, "title": "\u003cb\u003eChatGPT\u003c/b\u003e\u003cbr\u003e\u042f\u0437\u044b\u043a: ru\u003cbr\u003e\u0421\u0441\u044b\u043b\u043a\u0430: https://ru.wikipedia.org/wiki/ChatGPT", "url": "https://ru.wikipedia.org/wiki/ChatGPT"}, {"color": {"background": "#4A90E2", "border": "#245580", "highlight": {"background": "#F5A623", "border": "#C47F0A"}}, "font": {"color": "#222222"}, "id": "Claude", "label": "Claude", "shape": "dot", "size": 20, "title": "\u003cb\u003eClaude\u003c/b\u003e\u003cbr\u003e\u042f\u0437\u044b\u043a: ru\u003cbr\u003e\u0421\u0441\u044b\u043b\u043a\u0430: https://ru.wikipedia.org/wiki/Claude", "url": "https://ru.wikipedia.org/wiki/Claude"}, {"color": {"background": "#4A90E2", "border": "#245580", "highlight": {"background": "#F5A623", "border": "#C47F0A"}}, "font": {"color": "#222222"}, "id": "\u0412\u044b\u0447\u0438\u0441\u043b\u0438\u0442\u0435\u043b\u044c\u043d\u044b\u0435 \u043c\u0430\u0448\u0438\u043d\u044b \u0438 \u0440\u0430\u0437\u0443\u043c", "label": "\u0412\u044b\u0447\u0438\u0441\u043b\u0438\u0442\u0435\u043b\u044c\u043d\u044b\u0435 \u043c\u0430\u0448\u0438\u043d\u044b \u0438 \u0440\u0430\u0437\u0443\u043c", "shape": "dot", "size": 20, "title": "\u003cb\u003e\u0412\u044b\u0447\u0438\u0441\u043b\u0438\u0442\u0435\u043b\u044c\u043d\u044b\u0435 \u043c\u0430\u0448\u0438\u043d\u044b \u0438 \u0440\u0430\u0437\u0443\u043c\u003c/b\u003e\u003cbr\u003e\u042f\u0437\u044b\u043a: ru\u003cbr\u003e\u0421\u0441\u044b\u043b\u043a\u0430: https://ru.wikipedia.org/wiki/%D0%92%D1%8B%D1%87%D0%B8%D1%81%D0%BB%D0%B8%D1%82%D0%B5%D0%BB%D1%8C%D0%BD%D1%8B%D0%B5_%D0%BC%D0%B0%D1%88%D0%B8%D0%BD%D1%8B_%D0%B8_%D1%80%D0%B0%D0%B7%D1%83%D0%BC", "url": "https://ru.wikipedia.org/wiki/%D0%92%D1%8B%D1%87%D0%B8%D1%81%D0%BB%D0%B8%D1%82%D0%B5%D0%BB%D1%8C%D0%BD%D1%8B%D0%B5_%D0%BC%D0%B0%D1%88%D0%B8%D0%BD%D1%8B_%D0%B8_%D1%80%D0%B0%D0%B7%D1%83%D0%BC"}, {"color": {"background": "#4A90E2", "border": "#245580", "highlight": {"background": "#F5A623", "border": "#C47F0A"}}, "font": {"color": "#222222"}, "id": "DALL-E", "label": "DALL-E", "shape": "dot", "size": 20, "title": "\u003cb\u003eDALL-E\u003c/b\u003e\u003cbr\u003e\u042f\u0437\u044b\u043a: ru\u003cbr\u003e\u0421\u0441\u044b\u043b\u043a\u0430: https://ru.wikipedia.org/wiki/DALL-E", "url": "https://ru.wikipedia.org/wiki/DALL-E"}, {"color": {"background": "#4A90E2", "border": "#245580", "highlight": {"background": "#F5A623", "border": "#C47F0A"}}, "font": {"color": "#222222"}, "id": "DFKI", "label": "DFKI", "shape": "dot", "size": 20, "title": "\u003cb\u003eDFKI\u003c/b\u003e\u003cbr\u003e\u042f\u0437\u044b\u043a: ru\u003cbr\u003e\u0421\u0441\u044b\u043b\u043a\u0430: https://ru.wikipedia.org/wiki/DFKI", "url": "https://ru.wikipedia.org/wiki/DFKI"}, {"color": {"background": "#4A90E2", "border": "#245580", "highlight": {"background": "#F5A623", "border": "#C47F0A"}}, "font": {"color": "#222222"}, "id": "DeepSeek", "label": "DeepSeek", "shape": "dot", "size": 20, "title": "\u003cb\u003eDeepSeek\u003c/b\u003e\u003cbr\u003e\u042f\u0437\u044b\u043a: ru\u003cbr\u003e\u0421\u0441\u044b\u043b\u043a\u0430: https://ru.wikipedia.org/wiki/DeepSeek", "url": "https://ru.wikipedia.org/wiki/DeepSeek"}, {"color": {"background": "#4A90E2", "border": "#245580", "highlight": {"background": "#F5A623", "border": "#C47F0A"}}, "font": {"color": "#222222"}, "id": "Deep Blue", "label": "Deep Blue", "shape": "dot", "size": 20, "title": "\u003cb\u003eDeep Blue\u003c/b\u003e\u003cbr\u003e\u042f\u0437\u044b\u043a: ru\u003cbr\u003e\u0421\u0441\u044b\u043b\u043a\u0430: https://ru.wikipedia.org/wiki/Deep_Blue", "url": "https://ru.wikipedia.org/wiki/Deep_Blue"}, {"color": {"background": "#4A90E2", "border": "#245580", "highlight": {"background": "#F5A623", "border": "#C47F0A"}}, "font": {"color": "#222222"}, "id": "Deutsche Bank", "label": "Deutsche Bank", "shape": "dot", "size": 20, "title": "\u003cb\u003eDeutsche Bank\u003c/b\u003e\u003cbr\u003e\u042f\u0437\u044b\u043a: ru\u003cbr\u003e\u0421\u0441\u044b\u043b\u043a\u0430: https://ru.wikipedia.org/wiki/Deutsche_Bank", "url": "https://ru.wikipedia.org/wiki/Deutsche_Bank"}, {"color": {"background": "#4A90E2", "border": "#245580", "highlight": {"background": "#F5A623", "border": "#C47F0A"}}, "font": {"color": "#222222"}, "id": "\u0426\u0438\u0444\u0440\u043e\u0432\u043e\u0439 \u0438\u0434\u0435\u043d\u0442\u0438\u0444\u0438\u043a\u0430\u0442\u043e\u0440 \u043e\u0431\u044a\u0435\u043a\u0442\u0430", "label": "\u0426\u0438\u0444\u0440\u043e\u0432\u043e\u0439 \u0438\u0434\u0435\u043d\u0442\u0438\u0444\u0438\u043a\u0430\u0442\u043e\u0440 \u043e\u0431\u044a\u0435\u043a\u0442\u0430", "shape": "dot", "size": 20, "title": "\u003cb\u003e\u0426\u0438\u0444\u0440\u043e\u0432\u043e\u0439 \u0438\u0434\u0435\u043d\u0442\u0438\u0444\u0438\u043a\u0430\u0442\u043e\u0440 \u043e\u0431\u044a\u0435\u043a\u0442\u0430\u003c/b\u003e\u003cbr\u003e\u042f\u0437\u044b\u043a: ru\u003cbr\u003e\u0421\u0441\u044b\u043b\u043a\u0430: https://ru.wikipedia.org/wiki/%D0%A6%D0%B8%D1%84%D1%80%D0%BE%D0%B2%D0%BE%D0%B9_%D0%B8%D0%B4%D0%B5%D0%BD%D1%82%D0%B8%D1%84%D0%B8%D0%BA%D0%B0%D1%82%D0%BE%D1%80_%D0%BE%D0%B1%D1%8A%D0%B5%D0%BA%D1%82%D0%B0", "url": "https://ru.wikipedia.org/wiki/%D0%A6%D0%B8%D1%84%D1%80%D0%BE%D0%B2%D0%BE%D0%B9_%D0%B8%D0%B4%D0%B5%D0%BD%D1%82%D0%B8%D1%84%D0%B8%D0%BA%D0%B0%D1%82%D0%BE%D1%80_%D0%BE%D0%B1%D1%8A%D0%B5%D0%BA%D1%82%D0%B0"}, {"color": {"background": "#4A90E2", "border": "#245580", "highlight": {"background": "#F5A623", "border": "#C47F0A"}}, "font": {"color": "#222222"}, "id": "Doom", "label": "Doom", "shape": "dot", "size": 20, "title": "\u003cb\u003eDoom\u003c/b\u003e\u003cbr\u003e\u042f\u0437\u044b\u043a: ru\u003cbr\u003e\u0421\u0441\u044b\u043b\u043a\u0430: https://ru.wikipedia.org/wiki/Doom", "url": "https://ru.wikipedia.org/wiki/Doom"}, {"color": {"background": "#4A90E2", "border": "#245580", "highlight": {"background": "#F5A623", "border": "#C47F0A"}}, "font": {"color": "#222222"}, "id": "Facebook", "label": "Facebook", "shape": "dot", "size": 20, "title": "\u003cb\u003eFacebook\u003c/b\u003e\u003cbr\u003e\u042f\u0437\u044b\u043a: ru\u003cbr\u003e\u0421\u0441\u044b\u043b\u043a\u0430: https://ru.wikipedia.org/wiki/Facebook", "url": "https://ru.wikipedia.org/wiki/Facebook"}]);
+                  edges = new vis.DataSet([{"arrows": "to", "color": "#999999", "from": "\u0418\u0441\u043a\u0443\u0441\u0441\u0442\u0432\u0435\u043d\u043d\u044b\u0439 \u0438\u043d\u0442\u0435\u043b\u043b\u0435\u043a\u0442", "to": "AIBO"}, {"arrows": "to", "color": "#999999", "from": "\u0418\u0441\u043a\u0443\u0441\u0441\u0442\u0432\u0435\u043d\u043d\u044b\u0439 \u0438\u043d\u0442\u0435\u043b\u043b\u0435\u043a\u0442", "to": "Alibaba Cloud"}, {"arrows": "to", "color": "#999999", "from": "\u0418\u0441\u043a\u0443\u0441\u0441\u0442\u0432\u0435\u043d\u043d\u044b\u0439 \u0438\u043d\u0442\u0435\u043b\u043b\u0435\u043a\u0442", "to": "AlphaGo"}, {"arrows": "to", "color": "#999999", "from": "\u0418\u0441\u043a\u0443\u0441\u0441\u0442\u0432\u0435\u043d\u043d\u044b\u0439 \u0438\u043d\u0442\u0435\u043b\u043b\u0435\u043a\u0442", "to": "Amazon"}, {"arrows": "to", "color": "#999999", "from": "\u0418\u0441\u043a\u0443\u0441\u0441\u0442\u0432\u0435\u043d\u043d\u044b\u0439 \u0438\u043d\u0442\u0435\u043b\u043b\u0435\u043a\u0442", "to": "Amazon Alexa"}, {"arrows": "to", "color": "#999999", "from": "\u0418\u0441\u043a\u0443\u0441\u0441\u0442\u0432\u0435\u043d\u043d\u044b\u0439 \u0438\u043d\u0442\u0435\u043b\u043b\u0435\u043a\u0442", "to": "Anthropic"}, {"arrows": "to", "color": "#999999", "from": "\u0418\u0441\u043a\u0443\u0441\u0441\u0442\u0432\u0435\u043d\u043d\u044b\u0439 \u0438\u043d\u0442\u0435\u043b\u043b\u0435\u043a\u0442", "to": "Apple Intelligence"}, {"arrows": "to", "color": "#999999", "from": "\u0418\u0441\u043a\u0443\u0441\u0441\u0442\u0432\u0435\u043d\u043d\u044b\u0439 \u0438\u043d\u0442\u0435\u043b\u043b\u0435\u043a\u0442", "to": "ArXiv.org"}, {"arrows": "to", "color": "#999999", "from": "\u0418\u0441\u043a\u0443\u0441\u0441\u0442\u0432\u0435\u043d\u043d\u044b\u0439 \u0438\u043d\u0442\u0435\u043b\u043b\u0435\u043a\u0442", "to": "Atlas of AI: Power, Politics, and the Planetary Costs of Artificial Intelligence"}, {"arrows": "to", "color": "#999999", "from": "\u0418\u0441\u043a\u0443\u0441\u0441\u0442\u0432\u0435\u043d\u043d\u044b\u0439 \u0438\u043d\u0442\u0435\u043b\u043b\u0435\u043a\u0442", "to": "Audi TT"}, {"arrows": "to", "color": "#999999", "from": "\u0418\u0441\u043a\u0443\u0441\u0441\u0442\u0432\u0435\u043d\u043d\u044b\u0439 \u0438\u043d\u0442\u0435\u043b\u043b\u0435\u043a\u0442", "to": "BT Group"}, {"arrows": "to", "color": "#999999", "from": "\u0418\u0441\u043a\u0443\u0441\u0441\u0442\u0432\u0435\u043d\u043d\u044b\u0439 \u0438\u043d\u0442\u0435\u043b\u043b\u0435\u043a\u0442", "to": "Bing"}, {"arrows": "to", "color": "#999999", "from": "\u0418\u0441\u043a\u0443\u0441\u0441\u0442\u0432\u0435\u043d\u043d\u044b\u0439 \u0438\u043d\u0442\u0435\u043b\u043b\u0435\u043a\u0442", "to": "ByteDance"}, {"arrows": "to", "color": "#999999", "from": "\u0418\u0441\u043a\u0443\u0441\u0441\u0442\u0432\u0435\u043d\u043d\u044b\u0439 \u0438\u043d\u0442\u0435\u043b\u043b\u0435\u043a\u0442", "to": "C-3PO"}, {"arrows": "to", "color": "#999999", "from": "\u0418\u0441\u043a\u0443\u0441\u0441\u0442\u0432\u0435\u043d\u043d\u044b\u0439 \u0438\u043d\u0442\u0435\u043b\u043b\u0435\u043a\u0442", "to": "CNews"}, {"arrows": "to", "color": "#999999", "from": "\u0418\u0441\u043a\u0443\u0441\u0441\u0442\u0432\u0435\u043d\u043d\u044b\u0439 \u0438\u043d\u0442\u0435\u043b\u043b\u0435\u043a\u0442", "to": "ChatGPT"}, {"arrows": "to", "color": "#999999", "from": "\u0418\u0441\u043a\u0443\u0441\u0441\u0442\u0432\u0435\u043d\u043d\u044b\u0439 \u0438\u043d\u0442\u0435\u043b\u043b\u0435\u043a\u0442", "to": "Claude"}, {"arrows": "to", "color": "#999999", "from": "\u0418\u0441\u043a\u0443\u0441\u0441\u0442\u0432\u0435\u043d\u043d\u044b\u0439 \u0438\u043d\u0442\u0435\u043b\u043b\u0435\u043a\u0442", "to": "DALL-E"}, {"arrows": "to", "color": "#999999", "from": "\u0418\u0441\u043a\u0443\u0441\u0441\u0442\u0432\u0435\u043d\u043d\u044b\u0439 \u0438\u043d\u0442\u0435\u043b\u043b\u0435\u043a\u0442", "to": "DFKI"}, {"arrows": "to", "color": "#999999", "from": "\u0418\u0441\u043a\u0443\u0441\u0441\u0442\u0432\u0435\u043d\u043d\u044b\u0439 \u0438\u043d\u0442\u0435\u043b\u043b\u0435\u043a\u0442", "to": "DeepSeek"}, {"arrows": "to", "color": "#999999", "from": "\u0418\u0441\u043a\u0443\u0441\u0441\u0442\u0432\u0435\u043d\u043d\u044b\u0439 \u0438\u043d\u0442\u0435\u043b\u043b\u0435\u043a\u0442", "to": "Deep Blue"}, {"arrows": "to", "color": "#999999", "from": "\u0418\u0441\u043a\u0443\u0441\u0441\u0442\u0432\u0435\u043d\u043d\u044b\u0439 \u0438\u043d\u0442\u0435\u043b\u043b\u0435\u043a\u0442", "to": "Deutsche Bank"}, {"arrows": "to", "color": "#999999", "from": "\u0418\u0441\u043a\u0443\u0441\u0441\u0442\u0432\u0435\u043d\u043d\u044b\u0439 \u0438\u043d\u0442\u0435\u043b\u043b\u0435\u043a\u0442", "to": "Facebook"}, {"arrows": "to", "color": "#999999", "from": "Alibaba Cloud", "to": "\u0411\u043e\u043b\u044c\u0448\u0438\u0435 \u0434\u0430\u043d\u043d\u044b\u0435"}, {"arrows": "to", "color": "#999999", "from": "AlphaGo", "to": "ArXiv.org"}, {"arrows": "to", "color": "#999999", "from": "AlphaGo", "to": "Deep Blue"}, {"arrows": "to", "color": "#999999", "from": "AlphaGo", "to": "Facebook"}, {"arrows": "to", "color": "#999999", "from": "Amazon", "to": "Amazon Alexa"}, {"arrows": "to", "color": "#999999", "from": "Amazon Alexa", "to": "Amazon"}, {"arrows": "to", "color": "#999999", "from": "Anthropic", "to": "ChatGPT"}, {"arrows": "to", "color": "#999999", "from": "Anthropic", "to": "Claude"}, {"arrows": "to", "color": "#999999", "from": "Anthropic", "to": "DALL-E"}, {"arrows": "to", "color": "#999999", "from": "Anthropic", "to": "DeepSeek"}, {"arrows": "to", "color": "#999999", "from": "Apple Intelligence", "to": "Anthropic"}, {"arrows": "to", "color": "#999999", "from": "Apple Intelligence", "to": "ChatGPT"}, {"arrows": "to", "color": "#999999", "from": "Apple Intelligence", "to": "Claude"}, {"arrows": "to", "color": "#999999", "from": "Atlas of AI: Power, Politics, and the Planetary Costs of Artificial Intelligence", "to": "\u0418\u0441\u043a\u0443\u0441\u0441\u0442\u0432\u0435\u043d\u043d\u044b\u0439 \u0438\u043d\u0442\u0435\u043b\u043b\u0435\u043a\u0442"}, {"arrows": "to", "color": "#999999", "from": "ChatGPT", "to": "Anthropic"}, {"arrows": "to", "color": "#999999", "from": "ChatGPT", "to": "Apple Intelligence"}, {"arrows": "to", "color": "#999999", "from": "ChatGPT", "to": "Bing"}, {"arrows": "to", "color": "#999999", "from": "ChatGPT", "to": "Claude"}, {"arrows": "to", "color": "#999999", "from": "ChatGPT", "to": "DALL-E"}, {"arrows": "to", "color": "#999999", "from": "ChatGPT", "to": "DeepSeek"}, {"arrows": "to", "color": "#999999", "from": "Claude", "to": "Anthropic"}, {"arrows": "to", "color": "#999999", "from": "Claude", "to": "ArXiv.org"}, {"arrows": "to", "color": "#999999", "from": "Claude", "to": "ChatGPT"}, {"arrows": "to", "color": "#999999", "from": "Claude", "to": "DALL-E"}, {"arrows": "to", "color": "#999999", "from": "Claude", "to": "DeepSeek"}, {"arrows": "to", "color": "#999999", "from": "\u0412\u044b\u0447\u0438\u0441\u043b\u0438\u0442\u0435\u043b\u044c\u043d\u044b\u0435 \u043c\u0430\u0448\u0438\u043d\u044b \u0438 \u0440\u0430\u0437\u0443\u043c", "to": "\u0418\u0441\u043a\u0443\u0441\u0441\u0442\u0432\u0435\u043d\u043d\u044b\u0439 \u0438\u043d\u0442\u0435\u043b\u043b\u0435\u043a\u0442"}, {"arrows": "to", "color": "#999999", "from": "DALL-E", "to": "Anthropic"}, {"arrows": "to", "color": "#999999", "from": "DALL-E", "to": "Apple Intelligence"}, {"arrows": "to", "color": "#999999", "from": "DALL-E", "to": "ChatGPT"}, {"arrows": "to", "color": "#999999", "from": "DALL-E", "to": "Claude"}, {"arrows": "to", "color": "#999999", "from": "DALL-E", "to": "DeepSeek"}, {"arrows": "to", "color": "#999999", "from": "DFKI", "to": "\u0412\u044b\u0447\u0438\u0441\u043b\u0438\u0442\u0435\u043b\u044c\u043d\u044b\u0435 \u043c\u0430\u0448\u0438\u043d\u044b \u0438 \u0440\u0430\u0437\u0443\u043c"}, {"arrows": "to", "color": "#999999", "from": "DFKI", "to": "\u0418\u0441\u043a\u0443\u0441\u0441\u0442\u0432\u0435\u043d\u043d\u044b\u0439 \u0438\u043d\u0442\u0435\u043b\u043b\u0435\u043a\u0442"}, {"arrows": "to", "color": "#999999", "from": "DeepSeek", "to": "Anthropic"}, {"arrows": "to", "color": "#999999", "from": "DeepSeek", "to": "ByteDance"}, {"arrows": "to", "color": "#999999", "from": "DeepSeek", "to": "ChatGPT"}, {"arrows": "to", "color": "#999999", "from": "DeepSeek", "to": "Claude"}, {"arrows": "to", "color": "#999999", "from": "DeepSeek", "to": "DALL-E"}, {"arrows": "to", "color": "#999999", "from": "Deep Blue", "to": "AlphaGo"}, {"arrows": "to", "color": "#999999", "from": "Facebook", "to": "Amazon"}, {"arrows": "to", "color": "#999999", "from": "Facebook", "to": "CNews"}]);
+
+                  nodeColors = {};
+                  allNodes = nodes.get({ returnType: "Object" });
+                  for (nodeId in allNodes) {
+                    nodeColors[nodeId] = allNodes[nodeId].color;
+                  }
+                  allEdges = edges.get({ returnType: "Object" });
+                  // adding nodes and edges to the graph
+                  data = {nodes: nodes, edges: edges};
+
+                  var options = {
+    "configure": {
+        "enabled": false
+    },
+    "edges": {
+        "color": {
+            "inherit": true
+        },
+        "smooth": {
+            "enabled": true,
+            "type": "dynamic"
+        }
+    },
+    "interaction": {
+        "dragNodes": true,
+        "hideEdgesOnDrag": false,
+        "hideNodesOnDrag": false
+    },
+    "physics": {
+        "barnesHut": {
+            "avoidOverlap": 0,
+            "centralGravity": 0.3,
+            "damping": 0.09,
+            "gravitationalConstant": -30000,
+            "springConstant": 0.04,
+            "springLength": 150
+        },
+        "enabled": true,
+        "stabilization": {
+            "enabled": true,
+            "fit": true,
+            "iterations": 1000,
+            "onlyDynamicEdges": false,
+            "updateInterval": 50
+        }
+    }
+};
+
+                  
+
+
+                  
+
+                  network = new vis.Network(container, data, options);
+
+                  
+
+                  
+
+                  
+
+
+                  
+
+                  return network;
+
+              }
+              drawGraph();
+        </script>
+    </body>
+</html>
