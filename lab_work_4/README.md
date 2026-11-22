@@ -147,6 +147,12 @@ python run_spider.py --spider ecommerce
 python run_spider.py --spider news --keywords "python,программирование"
 ```
 
+### Ограничение на количество записей новостей
+
+```bash
+python run_spider.py --spider news --limit 200
+```
+
 ### Сохранение результатов в JSON
 
 ```bash
