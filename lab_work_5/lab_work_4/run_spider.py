@@ -17,6 +17,9 @@ SPIDERS = {
 
 
 def main():
+    scrapy_logs_dir = Path('__file__').resolve().parent
+    scrapy_logs_dir.mkdir(exist_ok=True)
+
     parser = argparse.ArgumentParser(
         description="Web Data Lab - запуск пауков Scrapy"
     )
@@ -35,6 +38,13 @@ def main():
     )
 
     parser.add_argument(
+        "--limit",
+        type=int,
+        default=100,
+        help="Количество записей",
+    )
+
+    parser.add_argument(
         "--output",
         default=None,
         help="Путь к выходному файлу JSON или CSV",
@@ -43,6 +53,8 @@ def main():
     args = parser.parse_args()
 
     spider_class = SPIDERS[args.spider]
+
+    Path("logs").mkdir(parents=True, exist_ok=True)
 
     output_path = args.output or f"data/raw/{args.spider}.json"
     Path(output_path).parent.mkdir(parents=True, exist_ok=True)
@@ -61,7 +73,7 @@ def main():
     process.crawl(
         spider_class,
         keywords=args.keywords,
-        limit=100,
+        limit=args.limit,
     )
 
     process.start()
