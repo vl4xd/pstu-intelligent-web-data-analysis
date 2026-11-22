@@ -1,5 +1,5 @@
-from web_data_lab.items import NewsItem, ProductItem
-from web_data_lab.loaders.item_loaders import (
+from lab_work_5.lab_work_4.web_data_lab.items import NewsItem, ProductItem
+from lab_work_5.lab_work_4.web_data_lab.loaders.item_loaders import (
     NewsItemLoader,
     ProductItemLoader,
 )

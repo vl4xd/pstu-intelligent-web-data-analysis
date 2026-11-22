@@ -1,6 +1,6 @@
 
-from web_data_lab.utils.text_cleaner import clean_text
-from web_data_lab.utils.validators import validate_item
+from lab_work_5.lab_work_4.web_data_lab.utils.text_cleaner import clean_text
+from lab_work_5.lab_work_4.web_data_lab.utils.validators import validate_item
 
 
 def test_clean_text():

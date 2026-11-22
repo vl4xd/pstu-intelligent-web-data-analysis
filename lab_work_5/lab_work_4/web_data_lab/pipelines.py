@@ -2,8 +2,8 @@
 from itemadapter import ItemAdapter
 from scrapy.exceptions import DropItem
 
-from web_data_lab.utils.text_cleaner import clean_text
-from web_data_lab.utils.validators import validate_item
+from lab_work_4.web_data_lab.utils.text_cleaner import clean_text
+from lab_work_4.web_data_lab.utils.validators import validate_item
 
 
 class CleaningPipeline:

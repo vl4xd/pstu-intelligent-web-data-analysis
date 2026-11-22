@@ -1,8 +1,8 @@
 
 from scrapy.http import HtmlResponse
 
-from web_data_lab.spiders.news_spider import NewsSpider
-from web_data_lab.spiders.ecommerce_spider import EcommerceSpider
+from lab_work_5.lab_work_4.web_data_lab.spiders.news_spider import NewsSpider
+from lab_work_5.lab_work_4.web_data_lab.spiders.ecommerce_spider import EcommerceSpider
 
 
 def test_news_spider_parses_article():

@@ -3,7 +3,7 @@ import logging
 import pytest
 from scrapy.exceptions import DropItem
 
-from web_data_lab.pipelines import (
+from lab_work_5.lab_work_4.web_data_lab.pipelines import (
     CleaningPipeline,
     DuplicationPipeline,
     ValidationPipeline,

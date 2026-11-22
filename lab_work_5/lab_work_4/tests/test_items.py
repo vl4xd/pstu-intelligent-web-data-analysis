@@ -1,4 +1,4 @@
-from web_data_lab.items import NewsItem, ProductItem
+from lab_work_5.lab_work_4.web_data_lab.items import NewsItem, ProductItem
 
 
 def test_news_item_fields():
