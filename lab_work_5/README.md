@@ -144,10 +144,11 @@ python main.py --dataset news --method lda --topics auto --limit 300 --output ne
 |---|---|
 | `--dataset` | `news` \| `products` |
 | `--method` | `lda` \| `nmf` \| `both` |
-| `--topics` | число K или `auto` (перебор 3..20 по Coherence) |
-| `--compare` | сравнить LDA и NMF на одном датасете |
+| `--topics` | число K или `auto` (перебор по Coherence в диапазоне `--min-k`..`--max-k`) |
+| `--min-k` | нижняя граница K при `--topics auto` (по умолчанию 3) |
+| `--max-k` | верхняя граница K при `--topics auto` (по умолчанию 20) |
+| `--compare` | сравнить LDA и NMF на одном датасете, сохранить `comparison.json` |
 | `--output` | префикс выходных файлов (JSON / PNG) |
-| `--limit` | максимум документов (по умолчанию — все) |
 
 ## 7. Результаты работы
 
