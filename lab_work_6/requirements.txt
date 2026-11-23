@@ -1,0 +1,13 @@
+torch==2.14.1+cu126
+torchvision==0.29.1+cu126
+
+gradio==6.32.0
+ultralytics==8.4.216
+openai-whisper==20250625
+yt-dlp==2026.10.26
+
+numpy>=1.26,<3
+pandas>=2.2,<4
+Pillow>=10,<13
+
+scikit-learn>=1.5,<2

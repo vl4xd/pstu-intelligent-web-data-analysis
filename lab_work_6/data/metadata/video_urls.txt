@@ -1,0 +1,8 @@
+# Формат: дисциплина|URL
+# Ссылки-кандидаты найдены на RUTUBE. Длительность указана по карточке/странице.
+# Перед обработкой сборщик повторно запросит актуальные метаданные.
+football|https://rutube.ru/video/7571409ccdae4a260cfa02b639947b0c/
+basketball|https://rutube.ru/video/59f9df1c63eea1a4064ad557663cf8e9/
+tennis|https://rutube.ru/video/3b853a03b64cf72497a925390cb019d8/
+athletics|https://rutube.ru/video/54e56eccfc4ff7bfdcbf0e807953d812/
+hockey|https://rutube.ru/video/a2cc784fb4dec1d90589d0e12da7f232/

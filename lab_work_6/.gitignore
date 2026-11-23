@@ -1,0 +1,39 @@
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# IDE
+.idea/
+.vscode/
+
+# Environment variables
+.env
+.env.*
+
+# Model weights — do not commit
+models/**/*.pt
+models/**/*.pth
+models/**/*.onnx
+
+# Raw video files
+data/raw/*
+!data/raw/.gitkeep
+
+# Extracted frames and audio
+data/frames/
+data/audio/
+data/frames_v2/
+data/audio_v2/
+
+# Temporary files
+*.log
+*.tmp
+.DS_Store
