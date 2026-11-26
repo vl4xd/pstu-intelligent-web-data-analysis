@@ -1,0 +1,6 @@
+CREATE TABLE IF NOT EXISTS items (
+    id INT PRIMARY KEY,
+    title VARCHAR(500) NOT NULL,
+    price FLOAT NOT NULL,
+    updated_at TIMESTAMP NOT NULL
+);

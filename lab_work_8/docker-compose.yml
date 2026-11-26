@@ -1,0 +1,40 @@
+x-airflow-common:
+  &airflow-common
+  build: .
+  environment:
+    - AIRFLOW__CORE__EXECUTOR=LocalExecutor
+    - AIRFLOW__CORE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres/airflow
+    - AIRFLOW__CORE__LOAD_EXAMPLES=False
+    - AIRFLOW_HOME=/opt/airflow
+    - PYTHONPATH=/opt/airflow
+    - DB_URL=postgresql://airflow:airflow@postgres:5432/airflow
+  volumes:
+    - ./dags:/opt/airflow/dags
+    - ./pipeline:/opt/airflow/pipeline
+  depends_on:
+    postgres:
+      condition: service_healthy
+
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: airflow
+      POSTGRES_PASSWORD: airflow
+      POSTGRES_DB: airflow
+    volumes:
+      - ./init_sql/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "airflow"]
+      interval: 5s
+      retries: 5
+
+  airflow:
+    <<: *airflow-common
+    ports:
+      - "8080:8080"
+    command: airflow standalone
+
+  pipeline:
+    <<: *airflow-common
+    command: sleep infinity # Контейнер просто ждет, пока его вызовет Airflow

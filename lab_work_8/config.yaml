@@ -1,0 +1,10 @@
+sources:
+  - mock_data
+
+limits:
+  rps: 2
+  timeout_s: 30
+
+thresholds:
+  min_rows: 10
+  max_price: 1000000
