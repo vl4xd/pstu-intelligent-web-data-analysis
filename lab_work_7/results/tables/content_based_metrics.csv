@@ -1,0 +1,2 @@
+model,k,evaluated_users,users_without_recommendations,precision@10,recall@10,map@10,ndcg@10,catalog_coverage
+Content-based TF-IDF,10,601,0,0.02346089850249584,0.026601832253395796,0.01308618132037433,0.03095089485345095,0.08689839572192513

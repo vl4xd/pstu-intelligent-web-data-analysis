@@ -1,0 +1,10 @@
+
+dataset:
+  name: movielens
+  data_dir: data/raw/movielens
+
+experiment:
+  test_size: 0.2
+  random_state: 42
+  positive_threshold: 4.0
+  top_k: 10

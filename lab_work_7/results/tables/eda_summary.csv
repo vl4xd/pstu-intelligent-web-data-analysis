@@ -1,0 +1,9 @@
+metric,value
+ratings,100836.0
+users,610.0
+movies,9724.0
+density,0.016999683055613623
+sparsity,0.9830003169443864
+mean_ratings_per_user,165.30491803278687
+median_ratings_per_user,70.5
+mean_ratings_per_movie,10.369806663924312
